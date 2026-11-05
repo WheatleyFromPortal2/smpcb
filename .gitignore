@@ -1,5 +1,5 @@
-# work directories
-current
+# don't track working directory 
+working
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
