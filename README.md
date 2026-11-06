@@ -49,6 +49,7 @@
 - periodic archives of `data` are zipped into a `~/smpcb-backups` folder
     - database must be backed up with sqlite3's own tools and zipped along with `res`
     - otherwise risk weird stuff happening
+    - backup archives to my onedrive occasionally in case of sd card failure
 - jobs saved to sqlite database named `smpcb.sqlite3`
     - this must be in write ahead log mode
 - gcode and svgs saved to `data/res` folder inside
