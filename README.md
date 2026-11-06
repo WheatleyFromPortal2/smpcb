@@ -73,10 +73,12 @@
 
 
 ### table: jobs
+- this will be the most important table
 - use unix time millis for primary key / job id
     - also functions as creation date
     - stole this from the Anki db schema (dae is a genius)
 - users can see their own jobs along with their states
+- jobs may include multiple layers and may need to wait for tool changes between them
 
 ### table: job_events
 - we don't want to store job state directly in jobs table
