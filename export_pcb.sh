@@ -16,18 +16,45 @@ if [ -z "$1" ]; then
 	exit 1 # exit with an error
 fi
 
+
 # PART 1: process the archive
 
-# 1. create working directory
-mkdir -p "working"
+# 1. create working and output directories
+mkdir -p "working" "outputs"
 
 # 2. get files from archive
 unzip -u "$1" -d "working" # overwrite existing files
 
-# PART 2: export the gerber
+# PART 2: export the layers as separate files
 
-# 1. clean up the working directory
+# 1. gerbers
+kicad-cli pcb export gerbers working/*.kicad_pcb --no-protel-ext     --output working
+
+# 2. edge cuts
+kicad-cli pcb export pos     working/*.kicad_pcb --gerber-board-edge --output working
+
+# 3. drill
+kicad-cli pcb export drill   working/*.kicad_pcb --format excellon   --output working
 
 
 # PART 3: export the gcode
-# - may need to rename files to align with pcb2gcode config file
+
+# 1. rename files into those specified in millproject so will pcb2gcode will understand them
+mv working/*-B_Cu.gbr      working/B_Cu.gbr
+mv working/*-Edge_Cuts.gbr working/Edge_Cuts.gbr
+mv working/*.drl           working/Drill.drl
+
+# 2. run pcb2gcode with correct arguments
+
+# 1. copy millproject into working folder
+cp millproject working
+
+# 2. cd into working folder
+cd working
+
+# 3. create output dir
+mkdir -p gcode
+
+# 4. export gcodes
+pcb2gcode --config millproject --output-dir ../outputs
+

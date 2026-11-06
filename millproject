@@ -1,0 +1,89 @@
+# pcb2gcode millproject - single-sided (back copper) board from KiCad
+# Machine: ShopBot Desktop on FluidNC
+# specify to use this file with pcb2gcode --config millproject
+
+# ---------- Input files (rename to match your KiCad plot output) ----------
+back=B_Cu.gbr
+outline=Edge_Cuts.gbr
+drill=Drill.drl   # combined PTH+NPTH file (NPTH is empty anyway)
+
+# ---------- Units / origin ----------
+metric=true                # input values below are in mm
+metricoutput=true          # emit G21 mm G-code
+zero-start=true            # lower-left of the job becomes X0 Y0
+output-dir=gcode
+
+# ---------- FluidNC compatibility ----------
+nog64=true                 # FluidNC doesn't support G64 path blending
+nog81=true                 # no canned drill cycles - plain G0/G1 instead
+nog91-1=true               # don't emit G91.1
+nom6=true                  # no M6; tool changes become an M0 pause
+
+# ---------- Heights ----------
+zsafe=0.5                    # rapid height between moves
+zchange=50                 # height to raise to for tool changes
+
+# ---------- Isolation milling: 30 deg V-bit, 0.1 mm tip ----------
+# Effective cut width = tip + 2 * depth * tan(15 deg)
+#   at 0.07 mm deep -> 0.1 + 2*0.07*0.268 = ~0.14 mm
+# If you go deeper, update mill-diameters to match or traces will come out wrong.
+zwork=-0.07
+mill-diameters=0.14
+milling-overlap=50%
+isolation-width=0.3        # ~0.3 mm gap around copper -> about 3 passes per trace;
+                           # narrows automatically where traces are closer than this
+mill-feed=500              # mm/min; cut is only 0.07 mm deep so load is light.
+                           # Drop back toward 300 if tips break or edges get ragged.
+mill-vertfeed=100          # mm/min plunge
+mill-speed=20000           # rpm (ignored if your spindle is manual)
+mill-feed-direction=climb
+tsp-2opt=false            # required: pcb2gcode refuses tsp-2opt + mill-feed-direction
+
+# ---------- Optional rubout with a second, larger flat bit ----------
+# List the V-bit first, then the rubout tool. isolation-width sets how much
+# copper to clear around traces; pcb2gcode pauses (M0) for the tool change.
+#mill-diameters=0.14,0.8
+#isolation-width=1.0       # (replaces the 0.3 above if you enable rubout)
+
+# ---------- Board outline: 2 mm end mill ----------
+cutter-diameter=2
+zcut=-1.8                  # 1.6 mm board + a little into the spoilboard
+cut-infeed=0.45            # depth per pass -> 4 passes (-0.45, -0.9, -1.35, -1.8)
+                           # use 0.6 for 3 passes or 0.9 for 2 if it cuts easily
+cut-feed=450               # mm/min (a bit gentler for the smaller 2 mm cutter)
+cut-vertfeed=100           # mm/min plunge
+cut-speed=12000
+cut-side=auto              # with back-only copper, outline is mirrored to match
+fill-outline=true          # needed for KiCad Edge.Cuts line outlines
+
+# Holding tabs so the board doesn't break free at the end
+bridges=2                  # tab width, mm
+bridgesnum=4
+zbridges=-1.0              # leaves 0.6 mm of material at each tab
+
+# ---------- Drilling ----------
+zdrill=-1.8
+drill-feed=150
+drill-speed=12000
+drill-side=auto
+
+# Only use the bits I own. Format is size:-lowertol:+uppertol, meaning
+# "this bit may be used for holes from (size - lowertol) to (size + uppertol)".
+# Board calls for 0.78, 0.8, 0.9, 1.1, 1.6, 3.2 mm. Resulting mapping:
+#   0.78, 0.80, 0.90 -> 0.8 bit   (48 + 128 + 4 holes)
+#   1.10             -> 1.1 bit   (12 holes)
+#   1.60             -> 1.6 bit   (3 holes; too small to mill with the 2 mm end mill)
+#   3.20             -> milled with the 2 mm outline end mill (see below)
+drills-available=0.8:-0.05:+0.15,1.1:-0.05:+0.05,1.6
+
+# ---------- Mill-drilling the big holes with the outline end mill ----------
+# Holes >= min-milldrill-hole-diameter are milled out (milldrill.ngc) instead
+# of drilled. Uses the same 2 mm end mill as the outline, so run milldrill.ngc
+# right before outline.ngc with no tool change. Step-down is cut-infeed.
+min-milldrill-hole-diameter=2.5
+milldrill-diameter=2
+zmilldrill=-1.8
+
+# ---------- Timing ----------
+spinup-time=3              # seconds, dwell after spindle on
+spindown-time=3
