@@ -3,6 +3,7 @@
 # specify to use this file with pcb2gcode --config millproject
 
 # ---------- Input files (rename to match your KiCad plot output) ----------
+front=F_Cu.gbr
 back=B_Cu.gbr
 outline=Edge_Cuts.gbr
 drill=Drill.drl   # combined PTH+NPTH file (NPTH is empty anyway)

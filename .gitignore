@@ -1,5 +1,5 @@
-# don't track working or output directories
-working
+# don't track temporary or output directories
+tmp
 outputs
 
 # Byte-compiled / optimized / DLL files
