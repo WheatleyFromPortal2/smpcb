@@ -67,3 +67,7 @@ pcb2gcode --config "$CONFIG_FILE" --output-dir "$OUTPUTS_DIR"
 
 # 1. delete tmp directory
 rm -rf "$TMP_DIR" # scary
+
+# 2. organize output directory
+mkdir -p "$OUTPUTS_DIR/svg"
+mv "$OUTPUTS_DIR"/*.svg "$OUTPUTS_DIR/svg"
