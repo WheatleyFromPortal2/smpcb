@@ -28,9 +28,10 @@
 ## 2. cli-controlled cutting
 
 - [ ] figure out how to send gcode to the router with python
+    - can test serial connection with `minicom -D /dev/ttyUSB0 -b 115200`
 - [ ] figure out how to home the router and start jobs successfully
 - [ ] learn sqlite using [sqlbolt](https://sqlbolt.com/lesson/select_queries_introduction)
-    - currently on lessen 1
+    - currently on [this lesson](https://sqlbolt.com/lesson/select_queries_with_joins)
 - [ ] convert table schemas to `.sql` schema files with comments and move out of the README.md
 
 ## 3. multi-user server
