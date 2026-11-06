@@ -28,7 +28,7 @@ zchange=50                 # height to raise to for tool changes
 # Effective cut width = tip + 2 * depth * tan(15 deg)
 #   at 0.07 mm deep -> 0.1 + 2*0.07*0.268 = ~0.14 mm
 # If you go deeper, update mill-diameters to match or traces will come out wrong.
-zwork=-0.07
+zwork=-0.05
 mill-diameters=0.14
 milling-overlap=50%
 isolation-width=0.3        # ~0.3 mm gap around copper -> about 3 passes per trace;
@@ -58,9 +58,9 @@ cut-side=auto              # with back-only copper, outline is mirrored to match
 fill-outline=true          # needed for KiCad Edge.Cuts line outlines
 
 # Holding tabs so the board doesn't break free at the end
-bridges=2                  # tab width, mm
-bridgesnum=4
-zbridges=-1.0              # leaves 0.6 mm of material at each tab
+# bridges=2                  # tab width, mm
+# bridgesnum=4
+# zbridges=-1.0              # leaves 0.6 mm of material at each tab
 
 # ---------- Drilling ----------
 zdrill=-1.8
